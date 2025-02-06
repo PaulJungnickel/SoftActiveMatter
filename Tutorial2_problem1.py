@@ -10,7 +10,8 @@ import matplotlib.animation as animation
 N = 300             # Number of particles
 L = 10.0            # Domain size (assumed square domain LxL)
 v = 0.03            # Particle speed
-eta = 0.1            # Noise amplitude (in radians)
+eta = 2.1            # Noise amplitude (in radians)
+gamma = 1
 r = 0.5             # Interaction radius
 dt = 1.0            # Time step
 num_steps = 800     # Number of simulation steps
@@ -88,7 +89,7 @@ def alignment(positions, angles, L, v, eta, r):
         neighbors = find_neighbors(i, positions, r, L)
         influence = np.angle(np.sum(np.exp(1.j * angles[neighbors])))
         new_angles[i] = influence
-    new_angles += np.random.normal(0,eta, len(positions))
+    new_angles += eta * np.sqrt(2*gamma*dt)*np.random.normal(0,1, len(positions))
     new_angles %= 2*np.pi
     return new_angles
 
@@ -124,7 +125,7 @@ def animate(frame):
     positions, angles = update_positions(positions, angles, L, v, eta, r)
     # order = 1/(v*dt) * np.linalg.norm(np.mean(positions - prev_positions, axis=0))
     diff = (positions - prev_positions + L/2) % L - L/2
-    order = 1/(v*dt) * np.mean(diff, axis=0)
+    order = np.linalg.norm( 1/(v*dt) * np.mean(diff, axis=0))
     print(order)
     # Update velocity components for quiver plot
     U = np.cos(angles)
@@ -142,7 +143,7 @@ def animate(frame):
     return Q,frame_text
 
 ani = animation.FuncAnimation(fig, animate, frames=num_steps, interval=50, blit=True)
-plt.show()
+# plt.show()
 
 writervideo = animation.FFMpegWriter(fps=60) 
 ani.save('TestsViscek_noise_%0.1f.mp4' % eta, writer=writervideo) 
