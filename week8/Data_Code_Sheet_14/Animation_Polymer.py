@@ -32,6 +32,6 @@ anim = animation.FuncAnimation(fig, animate, init_func=init,
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
 
-#anim.save('polymer.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+anim.save('polymer.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
-plt.show()
+# plt.show()
